@@ -127,12 +127,12 @@ function TaskItem({
           </>
         ) : (
           <>
-            <button onClick={() => onToggleCompleted(task.id)}>
+            <button className="complete-btn" onClick={() => onToggleCompleted(task.id)}>
               <CheckCircle size={16} />
               {task.completed ? "Undo" : "Complete"}
             </button>
 
-            <button onClick={() => setIsEditing(true)}>
+            <button className="edit-btn" onClick={() => setIsEditing(true)}>
               <Pencil size={16} />
               Edit
             </button>
@@ -140,7 +140,7 @@ function TaskItem({
             <button className="delete-btn" onClick={() => onDeleteTask(task.id)}>
               <Trash2 size={16} />
               Delete
-</button>
+            </button>
           </>
         )}
       </div>

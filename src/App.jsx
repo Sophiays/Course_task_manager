@@ -4,6 +4,7 @@ import SemesterSelector from "./components/SemesterSelector";
 import Dashboard from "./components/Dashboard";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
+import CourseChart from "./components/CourseChart";
 
 function App() {
   const [tasks, setTasks] = useState(() => {
@@ -16,6 +17,7 @@ function App() {
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortMode, setSortMode] = useState("category");
   const [selectedCourse, setSelectedCourse] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
@@ -77,59 +79,61 @@ function App() {
 
       const matchesCourse =
         selectedCourse === "all" || task.course === selectedCourse;
+      
+      const matchesCategory =
+        selectedCategory === "all" || task.category === selectedCategory;
 
-      return matchesSearch && matchesStatus && matchesCourse;
+      return matchesSearch && matchesStatus && matchesCourse && matchesCategory;
     })
     .sort((a, b) => {
-      if (sortMode === "urgent") {
-        return new Date(a.deadline) - new Date(b.deadline);
+      if (a.completed !== b.completed) {
+        return a.completed ? 1 : -1;
       }
 
-      const categoryOrder = {
-        期中考: 1,
-        期末考: 2,
-        小考: 3,
-        作業: 4,
-      };
-
-      return categoryOrder[a.category] - categoryOrder[b.category];
+      return new Date(a.deadline) - new Date(b.deadline);
     });
 
   return (
     <div className="app">
       <header className="header">
-        <h1>Course Task Manager</h1>
-        <p>Manage academic tasks by semester, course, category, and deadline.</p>
-      </header>
+        <div>
+          <h1>Course Task Manager</h1>
+          <p>Manage academic tasks by semester, course, category, and deadline.</p>
+        </div>
 
-      <SemesterSelector
-        currentSemester={currentSemester}
-        setCurrentSemester={setCurrentSemester}
-        setSelectedCourse={setSelectedCourse}
-        setSearchText={setSearchText}
-      />
+        <SemesterSelector
+          currentSemester={currentSemester}
+          setCurrentSemester={setCurrentSemester}
+          setSelectedCourse={setSelectedCourse}
+          setSearchText={setSearchText}
+        />
+      </header>
 
       <Dashboard tasks={semesterTasks} getDaysLeft={getDaysLeft} />
 
       <TaskForm onAddTask={addTask} courseOptions={courseOptions} />
 
-      <TaskList
-        tasks={semesterTasks}
-        filteredTasks={filteredTasks}
-        searchText={searchText}
-        setSearchText={setSearchText}
-        filterStatus={filterStatus}
-        setFilterStatus={setFilterStatus}
-        sortMode={sortMode}
-        setSortMode={setSortMode}
-        selectedCourse={selectedCourse}
-        setSelectedCourse={setSelectedCourse}
-        courseOptions={courseOptions}
-        onDeleteTask={deleteTask}
-        onToggleCompleted={toggleCompleted}
-        onUpdateTask={updateTask}
-        getDaysLeft={getDaysLeft}
-      />
+      <div className="content-grid">
+        <TaskList
+          tasks={semesterTasks}
+          filteredTasks={filteredTasks}
+          searchText={searchText}
+          setSearchText={setSearchText}
+          filterStatus={filterStatus}
+          setFilterStatus={setFilterStatus}
+          selectedCourse={selectedCourse}
+          setSelectedCourse={setSelectedCourse}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          courseOptions={courseOptions}
+          onDeleteTask={deleteTask}
+          onToggleCompleted={toggleCompleted}
+          onUpdateTask={updateTask}
+          getDaysLeft={getDaysLeft}
+        />
+
+        <CourseChart tasks={semesterTasks} />
+      </div>
     </div>
   );
 }

@@ -7,8 +7,6 @@ function TaskList({
   setSearchText,
   filterStatus,
   setFilterStatus,
-  sortMode,
-  setSortMode,
   selectedCourse,
   setSelectedCourse,
   courseOptions,
@@ -16,6 +14,8 @@ function TaskList({
   onToggleCompleted,
   onUpdateTask,
   getDaysLeft,
+  selectedCategory,
+  setSelectedCategory,
 }) {
   return (
     <section className="card">
@@ -24,7 +24,7 @@ function TaskList({
       <div className="controls">
         <input
           type="text"
-          placeholder="Search by task, course, or category..."
+          placeholder="Search by task or course..."
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
@@ -33,14 +33,20 @@ function TaskList({
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
         >
-          <option value="all">All</option>
+          <option value="all">All Status</option>
           <option value="active">Unfinished</option>
           <option value="completed">Completed</option>
         </select>
 
-        <select value={sortMode} onChange={(e) => setSortMode(e.target.value)}>
-          <option value="category">依照分類呈現</option>
-          <option value="urgent">依照時間急迫</option>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="all">All Types</option>
+          <option value="作業">作業</option>
+          <option value="小考">小考</option>
+          <option value="期中考">期中考</option>
+          <option value="期末考">期末考</option>
         </select>
 
         <select

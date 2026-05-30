@@ -22,11 +22,8 @@ function SemesterSelector({
   }
 
   return (
-    <section className="card semester-card">
-      <div>
-        <h2>{currentSemester}</h2>
-        <p>目前查看的學期</p>
-      </div>
+    <div className="semester-inline">
+      <span>Semester</span>
 
       <select value={currentSemester} onChange={handleChange}>
         {semesters.map((semester) => (
@@ -35,7 +32,7 @@ function SemesterSelector({
           </option>
         ))}
       </select>
-    </section>
+    </div>
   );
 }
 
