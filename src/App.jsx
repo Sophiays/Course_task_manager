@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import SemesterSelector from "./components/SemesterSelector";
+import Dashboard from "./components/Dashboard";
 import TaskForm from "./components/TaskForm";
 import TaskList from "./components/TaskList";
 
@@ -9,19 +11,18 @@ function App() {
     return savedTasks ? JSON.parse(savedTasks) : [];
   });
 
+  const [currentSemester, setCurrentSemester] = useState("大一上");
   const [searchText, setSearchText] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [sortMode, setSortMode] = useState("category");
   const [selectedCourse, setSelectedCourse] = useState("all");
-
-  const courseOptions = [...new Set(tasks.map((task) => task.course))];
 
   useEffect(() => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
   function addTask(newTask) {
-    setTasks([...tasks, newTask]);
+    setTasks([...tasks, { ...newTask, semester: currentSemester }]);
   }
 
   function deleteTask(id) {
@@ -54,16 +55,15 @@ function App() {
     return Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
   }
 
-  const overdueCount = tasks.filter(
-    (task) => !task.completed && getDaysLeft(task.deadline) < 0
-  ).length;
+  const semesterTasks = tasks.filter(
+    (task) => task.semester === currentSemester
+  );
 
-  const dueSoonCount = tasks.filter((task) => {
-    const daysLeft = getDaysLeft(task.deadline);
-    return !task.completed && daysLeft >= 0 && daysLeft <= 7;
-  }).length;
+  const courseOptions = [
+    ...new Set(semesterTasks.map((task) => task.course)),
+  ];
 
-  const filteredTasks = tasks
+  const filteredTasks = semesterTasks
     .filter((task) => {
       const matchesSearch =
         task.title.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -86,10 +86,10 @@ function App() {
       }
 
       const categoryOrder = {
-        作業: 1,
-        小考: 2,
-        期中考: 3,
-        期末考: 4,
+        期中考: 1,
+        期末考: 2,
+        小考: 3,
+        作業: 4,
       };
 
       return categoryOrder[a.category] - categoryOrder[b.category];
@@ -99,35 +99,22 @@ function App() {
     <div className="app">
       <header className="header">
         <h1>Course Task Manager</h1>
-        <p>Manage assignments, quizzes, exams, and deadlines.</p>
+        <p>Manage academic tasks by semester, course, category, and deadline.</p>
       </header>
+
+      <SemesterSelector
+        currentSemester={currentSemester}
+        setCurrentSemester={setCurrentSemester}
+        setSelectedCourse={setSelectedCourse}
+        setSearchText={setSearchText}
+      />
+
+      <Dashboard tasks={semesterTasks} getDaysLeft={getDaysLeft} />
 
       <TaskForm onAddTask={addTask} courseOptions={courseOptions} />
 
-      <section className="card dashboard">
-        <div>
-          <h3>{tasks.length}</h3>
-          <p>Total Tasks</p>
-        </div>
-
-        <div>
-          <h3>{tasks.filter((task) => !task.completed).length}</h3>
-          <p>Unfinished</p>
-        </div>
-
-        <div>
-          <h3>{dueSoonCount}</h3>
-          <p>Due in 7 Days</p>
-        </div>
-
-        <div>
-          <h3>{overdueCount}</h3>
-          <p>Overdue</p>
-        </div>
-      </section>
-
       <TaskList
-        tasks={tasks}
+        tasks={semesterTasks}
         filteredTasks={filteredTasks}
         searchText={searchText}
         setSearchText={setSearchText}

@@ -1,4 +1,13 @@
 import { useState } from "react";
+import {
+  Trash2,
+  Pencil,
+  CheckCircle,
+  Calendar,
+  BookOpen,
+  Tag,
+  Clock,
+} from "lucide-react";
 
 function TaskItem({
   task,
@@ -83,11 +92,28 @@ function TaskItem({
       ) : (
         <div>
           <h3>{task.title}</h3>
-          <p>Course: {task.course}</p>
-          <p>Category: {task.category}</p>
-          <p>Deadline: {task.deadline}</p>
+
+          <p>
+            <BookOpen size={16} />
+            Course: {task.course}
+          </p>
+
+          <p>
+            <Tag size={16} />
+            Category: {task.category}
+          </p>
+
+          <p>
+            <Calendar size={16} />
+            Deadline: {task.deadline}
+          </p>
+
           <p>Status: {task.completed ? "Completed" : "Unfinished"}</p>
-          <p className="deadline-label">{getDeadlineLabel()}</p>
+
+          <p className="deadline-label">
+            <Clock size={16} />
+            {getDeadlineLabel()}
+          </p>
         </div>
       )}
 
@@ -102,14 +128,19 @@ function TaskItem({
         ) : (
           <>
             <button onClick={() => onToggleCompleted(task.id)}>
+              <CheckCircle size={16} />
               {task.completed ? "Undo" : "Complete"}
             </button>
 
-            <button onClick={() => setIsEditing(true)}>Edit</button>
+            <button onClick={() => setIsEditing(true)}>
+              <Pencil size={16} />
+              Edit
+            </button>
 
             <button className="delete-btn" onClick={() => onDeleteTask(task.id)}>
+              <Trash2 size={16} />
               Delete
-            </button>
+</button>
           </>
         )}
       </div>
