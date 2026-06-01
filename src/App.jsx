@@ -98,7 +98,6 @@ function App() {
       <header className="header">
         <div>
           <h1>Course Task Manager</h1>
-          <p>Manage academic tasks by semester, course, category, and deadline.</p>
         </div>
 
         <SemesterSelector
